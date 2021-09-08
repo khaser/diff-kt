@@ -1,5 +1,6 @@
 import java.io.File
 import java.lang.Integer.max
+import java.util.function.Function
 
 class CompareCore(fileNameA: String, fileNameB: String) {
     private val string2Int: MutableMap<String, Int> = mutableMapOf();
@@ -8,31 +9,11 @@ class CompareCore(fileNameA: String, fileNameB: String) {
     val sequenceB = parseFile(fileNameB)
     val commonSequence = findLongestCommonSubSec()
 
-    fun printString(sequence: Char, it: Int, color: String) {
-        print(
-            when (color) {
-                "black" -> "\u001B[30m"
-                "red" -> "\u001B[31m"
-                "green" -> "\u001B[32m"
-                "yellow" -> "\u001B[33m"
-                "blue" -> "\u001B[34m"
-                "purple" -> "\u001B[35m"
-                "white" -> "\u001B[37m"
-                else -> "\u001B[0m"
-            }
-        )
-
-        println(
-            int2String[when (sequence) {
-                'A' -> sequenceA
-                'B' -> sequenceB
-                else -> throw Exception("Wrong sequence name. Only 'A' and 'B'")
-            }[it]]
-        )
-
-        //Reset console output color
-        print("\u001B[0m")
-    }
+    fun getString(sequence: Char, it: Int) = int2String[ when (sequence) {
+        'A' -> sequenceA
+        'B' -> sequenceB
+        else -> throw Exception("Wrong sequence name. Only 'A' and 'B'")
+    }[it]]
 
     private fun parseFile(fileName: String): IntArray {
         val file = File(fileName)
@@ -81,45 +62,122 @@ class CompareCore(fileNameA: String, fileNameB: String) {
         commonSubSec.reverse()
         return commonSubSec
     }
+}
 
+fun setColor(color: String) {
+    print(
+        when (color) {
+            "black" -> "\u001B[30m"
+            "red" -> "\u001B[31m"
+            "green" -> "\u001B[32m"
+            "yellow" -> "\u001B[33m"
+            "blue" -> "\u001B[34m"
+            "purple" -> "\u001B[35m"
+            "gray" -> "\u001B[37m"
+            else -> "\u001B[0m"
+        }
+    )
+}
+
+fun print2Colomns(strA: String, strB: String, colWidth: Int = 120) {
+    setColor("red")
+    print("${strA.padEnd(colWidth)}||")
+    setColor("green")
+    println(strB)
+}
+
+fun printAllSplit(core: CompareCore) {
+    var itA = 0;
+    var itB = 0;
+    val getA: (Int) -> String = { core.getString('A', it) }
+    val getB: (Int) -> String = { core.getString('B', it) }
+
+    for (i in core.commonSequence) {
+        repeat(max(i[0] - itA, i[1] - itB)) {
+            print2Colomns(if (itA < i[0]) getA(itA) else "", if (itB < i[1]) getB(itB) else "");
+            itA++
+            itB++;
+        }
+        itA = i[0]
+        itB = i[1] + 1
+        printString(core.getString('A', itA++), "white")
+    }
+
+    repeat(max(core.sequenceA.size - itA, core.sequenceB.size - itB)) {
+        print2Colomns(if (itA < core.sequenceA.size) getA(itA) else "", if (itB < core.sequenceB.size) getB(itB) else "");
+        itA++;
+        itB++;
+    }
+}
+
+fun printString(str: String, color: String) {
+    setColor(color)
+    println(str)
+    //Reset console output color
+    setColor("")
 }
 
 fun printAllNoSplit(core: CompareCore) {
     var itA = 0;
     var itB = 0;
+    val printA: (Int) -> Unit = { printString(core.getString('A', it), "red")}
+    val printB: (Int) -> Unit = { printString(core.getString('B', it), "green")}
+
     for (i in core.commonSequence) {
         for (it in itA until i[0]) {
-            core.printString('A', it, "red")
+            printA(it)
         }
         itA = i[0]
         for (it in itB until i[1]) {
-            core.printString('B', it, "green")
+            printB(it)
         }
         itB = i[1] + 1
-        core.printString('A', itA++, "white")
+        printString(core.getString('A', itA++), "white")
     }
 
     for (it in itA until core.sequenceA.size) {
-        core.printString('A', it, "red")
+        printA(it)
     }
     for (it in itB until core.sequenceB.size) {
-        core.printString('B', it, "green")
+        printB(it)
     }
 }
+
+fun parseLongArgs(args: List<String>): Map<String, String> {
+    val longArgs: MutableMap<String, String> = mutableMapOf()
+    var localArgs = args.toMutableList()
+    while (!args.isEmpty()) {
+        localArgs = localArgs.dropWhile { !(it.length > 2 && it.slice(0..1) == "--") }.toMutableList()
+        if (localArgs.isEmpty()) break
+        if (localArgs.size == 1) throw Exception("After --parameter_name must be value")
+        longArgs.put(localArgs[0].drop(2), localArgs[1])
+        localArgs.removeFirst()
+    }
+    return longArgs
+}
+
 
 
 fun main(args: Array<String>) {
     if (args.size < 2) throw Exception("Необходимо указать два файла для сравнения")
-    val argKeys = args.slice(0..args.size - 3)
+    val argsKeys = args.slice(0..args.size - 3)
     val fileNameA = args[args.size - 2]
     val fileNameB = args[args.size - 1]
 
-    val shortKeys = args.filter { it.length == 2 && it[0] == '-' }.toSet()
-//    val longKeys: Map<String, String> = args.reduceIndexed{index, acc, string -> }
+    val shortKeys = argsKeys.filter { it.length == 2 && it[0] == '-' }.map { it[1] }.toSet()
+    val longKeys = parseLongArgs(argsKeys)
 
-//    shortKey.forEach { println(it) }
-//    argKeys.forEach { println(it) }
+    if (shortKeys.contains('h')) {
+        val helpFile = File("help.txt")
+        helpFile.readLines().forEach{println(it)}
+        return
+    }
 
     val commonSubSec = CompareCore(fileNameA, fileNameB)
-    printAllNoSplit(commonSubSec)
+    when (longKeys.get("view")) {
+        "simple" -> printAllNoSplit(commonSubSec)
+        "split_full" -> printAllSplit(commonSubSec)
+        "split_short" -> printAllNoSplit(commonSubSec)
+        else -> printAllNoSplit(commonSubSec)
+    }
 }
