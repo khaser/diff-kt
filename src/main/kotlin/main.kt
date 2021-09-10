@@ -32,15 +32,6 @@ fun main(args: Array<String>) {
 
 
     val commonSubSec = CompareCore(fileNameA, fileNameB)
-    when (longKeys["view"]) {
-        "1" -> printAll(commonSubSec, PrintingMode.SERIES, PrintingMode.SERIES)
-        "2" -> printAll(commonSubSec, PrintingMode.SERIES, PrintingMode.SPLIT)
-        "3" -> printWithBorder(commonSubSec, 4)
-    }
-//    when (longKeys["view"]) {
-//        "1" -> printAllSplit(commonSubSec)
-//        "2" -> printOnlyDiffSeries(commonSubSec)
-//        "3" -> printOnlyDiffSplit(commonSubSec)
-//        else -> printOnlyDiffSeries(commonSubSec)
-//    }
+
+    printDiff(commonSubSec, longKeys, shortKeys)
 }

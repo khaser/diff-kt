@@ -6,6 +6,14 @@ enum class Color {
     BLACK, RED, GREEN, YELLOW, BLUE, PURPLE, GRAY, WHITE
 }
 
+enum class Sign {
+    DELETED, ADDED, NONE
+}
+
+enum class PrintLineMode {
+    NEWLINE, INLINE
+}
+
 fun setColor(color: Color) {
     print(
         when (color) {
@@ -23,39 +31,40 @@ fun setColor(color: Color) {
 
 
 
-fun printBlock2Colomns(block: CompareCore.TextBlock, color: Color = Color.WHITE, colWidth: Int = 120) {
-    printBlock2Colomns(block, block, color, color, colWidth);
+fun printBlock2Colomns(block: CompareCore.TextBlock, color: Color = Color.WHITE) {
+    printBlock2Colomns(block, block, Pair(Sign.NONE, Sign.NONE), Pair(color, color));
 }
 
 fun printBlock2Colomns(blockA: CompareCore.TextBlock, blockB: CompareCore.TextBlock,
-                       colorLeft: Color = Color.RED, colorRight: Color = Color.GREEN, colWidth: Int = 120) {
-    printBlock2Colomns(blockA.text, blockB.text, colorLeft, colorRight, colWidth);
+                       sign: Pair<Sign, Sign> = Pair(Sign.NONE, Sign.NONE), color: Pair<Color, Color> = Pair(Color.RED, Color.GREEN)) {
+    printLine2Colomns(getSign(blockA.seg, sign.first), getSign(blockB.seg, sign.second), Pair(Color.PURPLE, Color.PURPLE))
+    printBlock2Colomns(blockA.text, blockB.text, color);
 }
 
-fun printBlock2Colomns (block: Array<String>, color: Color = Color.WHITE, colWidth: Int = 120) {
-    printBlock2Colomns(block, block, color, color, colWidth);
+fun printBlock2Colomns (block: Array<String>, color: Color = Color.WHITE) {
+    printBlock2Colomns(block, block, Pair(color, color));
 }
 
 fun printBlock2Colomns (blockA: Array<String>, blockB: Array<String> = blockA,
-                        colorLeft: Color = Color.RED, colorRight: Color = Color.GREEN, colWidth: Int = 120) {
+                        color: Pair<Color, Color> = Pair(Color.RED, Color.GREEN)) {
     repeat(max(blockA.size, blockB.size)) {
         printLine2Colomns(
             if (it < blockA.size) blockA[it] else "",
             if (it < blockB.size) blockB[it] else "",
-            colorLeft, colorRight, colWidth
+            color
         )
     }
 }
 
 
-fun printLine2Colomns(strA: String, strB: String, colorLeft: Color = Color.RED,
-                      colorRight: Color = Color.GREEN, colWidth: Int = 120) {
-    setColor(colorLeft)
-    print("${strA.padEnd(colWidth)}||")
-    printLine(strB, colorRight)
+fun printLine2Colomns(strA: String, strB: String, color: Pair<Color, Color> = Pair(Color.RED, Color.GREEN)) {
+    printLine(strA.padEnd(colWidth), color.first, PrintLineMode.INLINE)
+    printLine("||", Color.YELLOW, PrintLineMode.INLINE)
+    printLine(strB, color.second)
 }
 
-fun printBlock(block: CompareCore.TextBlock, color: Color = Color.WHITE) {
+fun printBlock(block: CompareCore.TextBlock, sign: Sign = Sign.NONE, color: Color = Color.WHITE) {
+    printLine(getSign(block.seg, sign), Color.PURPLE)
     printBlock(block.text, color)
 }
 
@@ -63,13 +72,25 @@ fun printBlock(str: Array<String>, color: Color = Color.WHITE) {
     str.forEach { printLine(it, color) }
 }
 
-fun printSeparator(color: Color = Color.BLUE, colWidth: Int = 240) {
-    printLine("".padEnd(colWidth, '-'), color)
+fun printSeparator(color: Color = Color.BLUE) {
+    printLine("".padEnd(colWidth * 2, '-'), color)
 }
 
+fun getSign(seg: CompareCore.Segment, sign: Sign): String {
+    return when (sign) {
+        Sign.ADDED -> if (longSign) "Added strings from ${seg.from + 1} to ${seg.to + 1}"
+                      else "+${seg.from + 1}-${seg.to + 1}"
+        Sign.DELETED -> if (longSign) "Deleted strings from ${seg.from + 1} to ${seg.to + 1}"
+                       else "-${seg.from + 1}-${seg.to + 1}"
+        Sign.NONE -> ""
+    }
+}
 
-fun printLine(str: String, color: Color = Color.WHITE) {
+fun printLine(str: String, color: Color = Color.WHITE, mode: PrintLineMode = PrintLineMode.NEWLINE) {
     setColor(color)
-    println(str)
+    when (mode) {
+        PrintLineMode.INLINE -> print(str)
+        PrintLineMode.NEWLINE -> println(str)
+    }
     setColor(Color.WHITE)
 }

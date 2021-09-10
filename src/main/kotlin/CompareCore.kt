@@ -2,10 +2,11 @@ import java.io.File as JavaFile
 
 class File(fileName: String, parentCore: CompareCore) {
 
-    val string2Int = parentCore.string2Int
-    var int2String: Array<String> = arrayOf()
+    private val string2Int = parentCore.string2Int
+    private var int2String: Array<String> = arrayOf()
     val sequence = parseFile(fileName)
     val size = sequence.size
+    var minWidth = 0
 
     private fun parseFile(fileName: String): IntArray {
         val input = JavaFile(fileName)
@@ -21,6 +22,7 @@ class File(fileName: String, parentCore: CompareCore) {
             }
         }
         int2String = string2Int.keys.toTypedArray()
+        minWidth = int2String.maxOf { it.length }
         return sequence.toList().toIntArray()
     }
 
@@ -43,6 +45,7 @@ class CompareCore(fileNameA: String, fileNameB: String) {
         val text = file.getBlock(range.from, range.to)
         val seg = range
         val size = range.to - range.from + 1
+        val width = file.minWidth
     }
     data class DiffBlock(val blockA: TextBlock, val blockB: TextBlock)
 
