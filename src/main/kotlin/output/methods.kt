@@ -1,5 +1,6 @@
 package output
 import CompareCore
+import input.Options
 
 enum class PrintingMode {
     SPLIT, SERIES, NONE
@@ -8,31 +9,34 @@ enum class PrintingMode {
 var colWidth = 80
 var longSign = true
 
-fun printDiff(core: CompareCore, longArgs: Map<String, String>, shortKeys: Set<Char>) {
+fun printDiff(core: CompareCore, options: Map<Options, String>) {
 
     val minWidth = core.diff.maxOf { it.blockA.width }
 
-    colWidth = longArgs["width"]?.toIntOrNull() ?: minWidth
+    colWidth = options[Options.WIDTH]?.toIntOrNull() ?: minWidth
 
-    if (shortKeys.contains('s')) {
+    if (options.containsKey(Options.SHORT)) {
         longSign = false
     }
 
-    val commonMode: PrintingMode = when(longArgs["common"]) {
+    val commonMode: PrintingMode = when(options[Options.COMMON_MODE]) {
         "split" -> PrintingMode.SPLIT
         "series" -> PrintingMode.SERIES
         "none" -> PrintingMode.NONE
-        else -> PrintingMode.SPLIT
+        null -> PrintingMode.SPLIT
+        else -> {println("Warning!!! Mode \"${options[Options.COMMON_MODE]}\" for option --common is incorrect. Using default mode - split"); PrintingMode.SPLIT}
     }
-    val diffMode: PrintingMode = when(longArgs["diff"]) {
+    val diffMode: PrintingMode = when(options[Options.DIFF_MODE]) {
         "split" -> PrintingMode.SPLIT
         "series" -> PrintingMode.SERIES
         "none" -> PrintingMode.NONE
-        else -> PrintingMode.SPLIT
+        null -> PrintingMode.SPLIT
+        else -> {println("Warning!!! Mode \"${options[Options.DIFF_MODE]}\" for option --diff is incorrect. Using default mode - split"); PrintingMode.SPLIT}
     }
-    when (longArgs["mode"]) {
-        "all" -> printAll(core, commonMode, diffMode)
-        "border", null -> printWithBorder(core, longArgs["border_size"]?.toIntOrNull() ?: 5)
+    if (options.containsKey(Options.ENABLE_CONTEXT)) {
+        printWithBorder(core, options[Options.CONTEXT_BORDER]?.toIntOrNull() ?: 5)
+    } else {
+        printAll(core, commonMode, diffMode)
     }
 }
 

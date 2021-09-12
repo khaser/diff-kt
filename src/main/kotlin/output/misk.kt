@@ -58,7 +58,8 @@ fun printBlock2Colomns (blockA: Array<String>, blockB: Array<String> = blockA,
 
 
 fun printLine2Colomns(strA: String, strB: String, color: Pair<Color, Color> = Pair(Color.RED, Color.GREEN)) {
-    printLine(strA.padEnd(colWidth), color.first, PrintLineMode.INLINE)
+    val leftStr = if (strA.length <= colWidth) strA else strA.dropLast(max(0, strA.length - colWidth + 3)) + "..."
+    printLine(leftStr.padEnd(colWidth), color.first, PrintLineMode.INLINE)
     printLine("||", Color.YELLOW, PrintLineMode.INLINE)
     printLine(strB, color.second)
 }
