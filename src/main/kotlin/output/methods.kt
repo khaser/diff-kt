@@ -2,12 +2,9 @@ package output
 import CompareCore
 import input.Options
 
-enum class PrintingMode {
-    SPLIT, SERIES, NONE
-}
 
 var colWidth = 80
-var longSign = true
+var signMode = SignPrintingMode.LONG
 
 fun printDiff(core: CompareCore, options: Map<Options, String>) {
 
@@ -15,8 +12,14 @@ fun printDiff(core: CompareCore, options: Map<Options, String>) {
 
     colWidth = options[Options.WIDTH]?.toIntOrNull() ?: minWidth
 
-    if (options.containsKey(Options.SHORT)) {
-        longSign = false
+
+    signMode = when(options[Options.SIGN_MODE]) {
+        "long" -> SignPrintingMode.LONG
+        "short" -> SignPrintingMode.SHORT
+        "none" -> SignPrintingMode.NONE
+        null -> SignPrintingMode.LONG
+        else -> {println("Warning!!! Mode \"${options[Options.SIGN_MODE]}\" for option --sign is incorrect. Using default mode - long");
+            SignPrintingMode.LONG}
     }
 
     val commonMode: PrintingMode = when(options[Options.COMMON_MODE]) {
@@ -24,14 +27,16 @@ fun printDiff(core: CompareCore, options: Map<Options, String>) {
         "series" -> PrintingMode.SERIES
         "none" -> PrintingMode.NONE
         null -> PrintingMode.SPLIT
-        else -> {println("Warning!!! Mode \"${options[Options.COMMON_MODE]}\" for option --common is incorrect. Using default mode - split"); PrintingMode.SPLIT}
+        else -> {println("Warning!!! Mode \"${options[Options.COMMON_MODE]}\" for option --common is incorrect. Using default mode - split");
+            PrintingMode.SPLIT}
     }
     val diffMode: PrintingMode = when(options[Options.DIFF_MODE]) {
         "split" -> PrintingMode.SPLIT
         "series" -> PrintingMode.SERIES
         "none" -> PrintingMode.NONE
         null -> PrintingMode.SPLIT
-        else -> {println("Warning!!! Mode \"${options[Options.DIFF_MODE]}\" for option --diff is incorrect. Using default mode - split"); PrintingMode.SPLIT}
+        else -> {println("Warning!!! Mode \"${options[Options.DIFF_MODE]}\" for option --diff is incorrect. Using default mode - split");
+            PrintingMode.SPLIT}
     }
     if (options.containsKey(Options.ENABLE_CONTEXT)) {
         printWithBorder(core, options[Options.CONTEXT_BORDER]?.toIntOrNull() ?: 5)
@@ -49,9 +54,9 @@ fun printAll(core: CompareCore, commonMode: PrintingMode, diffMode: PrintingMode
             }
         } else {
             when (diffMode) {
-                PrintingMode.SPLIT -> printBlock2Colomns(i.blockA, i.blockB, Pair(Sign.DELETED, Sign.ADDED))
-                PrintingMode.SERIES -> {printBlock(i.blockA, Sign.DELETED, Color.RED);
-                                        printBlock(i.blockB, Sign.ADDED, Color.GREEN)}
+                PrintingMode.SPLIT -> printBlock2Colomns(i.blockA, i.blockB, Pair(SignType.DELETED, SignType.ADDED))
+                PrintingMode.SERIES -> {printBlock(i.blockA, SignType.DELETED, Color.RED);
+                                        printBlock(i.blockB, SignType.ADDED, Color.GREEN)}
             }
         }
     }
@@ -99,7 +104,7 @@ fun printWithBorder(core: CompareCore, border: Int) {
                 else -> printCommonBlock(it.blockA)
             }
         } else {
-            printBlock2Colomns(it.blockA, it.blockB, Pair(Sign.DELETED, Sign.ADDED))
+            printBlock2Colomns(it.blockA, it.blockB, Pair(SignType.DELETED, SignType.ADDED))
         }
     }
 }

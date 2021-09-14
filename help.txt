@@ -1,12 +1,18 @@
 NAME
     diff-kt - compare two files line by line on kotlin
 SYNOPSIS
-    java -jar [OPTIONS] fileA fileB
+    java -jar diff-kt [OPTIONS] fileA fileB
 OPTIONS
     [-h or --help] - show this help
     [-f $FILE or --file $FILE] - redirect output from standard output to $FILE
     [-w $NUM or --width $NUM] - set column width to $NUM
-    [-s or --short] - use short short sign of diff block instead of default long.
+    [-s $SIGN or --sign $SIGN] - use short short sign of diff block instead of default long.
+        $SIGN can take the following values:
+            long(Default)
+            Example: Deleted strings from 24 to 28
+            short
+            Example: -24-28
+            none Do not print sign
         Example: "-24-28" instead of "Deleted strings from 24 to 28"
     [-c $MODE or --common $MODE] set printing mode for common parts of files
     [-d $MODE or --diff $MODE] set printing mode for different parts of files

@@ -47,7 +47,7 @@ class CompareCore(fileNameA: String, fileNameB: String) {
         val size = range.to - range.from + 1
         val width = file.minWidth
     }
-    data class DiffBlock(var blockA: TextBlock, var blockB: TextBlock)
+    data class DiffBlock(val blockA: TextBlock, val blockB: TextBlock)
 
     val diff: MutableList<DiffBlock> = generateDiff()
 
