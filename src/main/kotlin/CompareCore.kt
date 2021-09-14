@@ -1,16 +1,24 @@
+import kotlin.system.exitProcess
 import java.io.File as JavaFile
 
+//Class for reading input file and converting it to sequence of integers(further SID) saving return transformation.
 class File(fileName: String, parentCore: CompareCore) {
 
+    //Map for getting string by SID
     private val string2Int = parentCore.string2Int
+    //Array reverse to string2Int. Used to give equal strings from different files the same SID
     private var int2String: Array<String> = arrayOf()
+    //Array of SID for file
     val sequence = parseFile(fileName)
     val size = sequence.size
     var minWidth = 0
 
     private fun parseFile(fileName: String): IntArray {
         val input = JavaFile(fileName)
-        if (!input.exists()) throw Exception("Файл $fileName не найден. Проверьте путь и права доступа")
+        if (!input.exists()) {
+            println("Файл $fileName не найден. Проверьте путь и права доступа")
+            exitProcess(2)
+        }
 
         val sequence: MutableList<Int> = mutableListOf()
         for (line in input.readLines()) {
@@ -35,9 +43,11 @@ class File(fileName: String, parentCore: CompareCore) {
 
 class CompareCore(fileNameA: String, fileNameB: String) {
 
+    //Common SID -> String map for both files
     val string2Int: MutableMap<String, Int> = mutableMapOf()
-    private val fileA = File(fileNameA, this);
-    private val fileB = File(fileNameB, this);
+    private val fileA = File(fileNameA, this)
+    private val fileB = File(fileNameB, this)
+    //Longest common sequence as SIDs array
     private val commonSequence = findLongestCommonSubSec()
 
     data class Segment(val from: Int, val to: Int)

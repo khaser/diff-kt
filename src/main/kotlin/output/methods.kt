@@ -1,51 +1,41 @@
 package output
 import CompareCore
 import input.Options
+import input.keyMathing
+import java.io.File
 
+//Package for output object CompareCore.diff in different modes, determined by user.
+//This file contains semantic part of package, all auxiliary functions can be find in misk.kt
 
 var colWidth = 80
+var outputFile: File? = null
 var signMode = SignPrintingMode.LONG
+var diffMode = PrintingMode.SPLIT
+var commonMode = PrintingMode.SPLIT
 
+//Main function of this package and entrypoint
 fun printDiff(core: CompareCore, options: Map<Options, String>) {
 
     val minWidth = core.diff.maxOf { it.blockA.width }
 
     colWidth = options[Options.WIDTH]?.toIntOrNull() ?: minWidth
 
-
-    signMode = when(options[Options.SIGN_MODE]) {
-        "long" -> SignPrintingMode.LONG
-        "short" -> SignPrintingMode.SHORT
-        "none" -> SignPrintingMode.NONE
-        null -> SignPrintingMode.LONG
-        else -> {println("Warning!!! Mode \"${options[Options.SIGN_MODE]}\" for option --sign is incorrect. Using default mode - long");
-            SignPrintingMode.LONG}
+    if (options.containsKey(Options.FILE)) {
+        outputFile = File(options[Options.FILE]!!)
     }
 
-    val commonMode: PrintingMode = when(options[Options.COMMON_MODE]) {
-        "split" -> PrintingMode.SPLIT
-        "series" -> PrintingMode.SERIES
-        "none" -> PrintingMode.NONE
-        null -> PrintingMode.SPLIT
-        else -> {println("Warning!!! Mode \"${options[Options.COMMON_MODE]}\" for option --common is incorrect. Using default mode - split");
-            PrintingMode.SPLIT}
-    }
-    val diffMode: PrintingMode = when(options[Options.DIFF_MODE]) {
-        "split" -> PrintingMode.SPLIT
-        "series" -> PrintingMode.SERIES
-        "none" -> PrintingMode.NONE
-        null -> PrintingMode.SPLIT
-        else -> {println("Warning!!! Mode \"${options[Options.DIFF_MODE]}\" for option --diff is incorrect. Using default mode - split");
-            PrintingMode.SPLIT}
-    }
+    //Init signMode, diffMode, commonMode from input arguments
+    keyMathing(options)
+
     if (options.containsKey(Options.ENABLE_CONTEXT)) {
         printWithBorder(core, options[Options.CONTEXT_BORDER]?.toIntOrNull() ?: 5)
     } else {
-        printAll(core, commonMode, diffMode)
+        printAll(core)
     }
 }
 
-fun printAll(core: CompareCore, commonMode: PrintingMode, diffMode: PrintingMode) {
+//Implementation of default diff, customized by commonMode and diffMode
+private fun printAll(core: CompareCore) {
     for (i in core.diff) {
         if (i.blockA === i.blockB) {
             when (commonMode) {
@@ -62,11 +52,13 @@ fun printAll(core: CompareCore, commonMode: PrintingMode, diffMode: PrintingMode
     }
 }
 
+//Enum for definition place of incomplete common block. Used only by printWithBorder
 enum class Place {
     FIRST, LAST
 }
 
-fun printWithBorder(core: CompareCore, border: Int) {
+//Implementation of context diff, customized only by border
+private fun printWithBorder(core: CompareCore, border: Int) {
 
     fun printTopOrBottomCommonBlock(block: CompareCore.TextBlock, position: Place) {
         if (block.size > border) {

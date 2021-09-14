@@ -34,3 +34,7 @@ OPTIONS
         Common part 4
         -------------------------------------------------------------------------
     [-b $NUM or --border $NUM] Set context border to $NUM lines. 5 by default.
+EXIT CODES
+    0 - SUCCESS code, files identical
+    1 - SUCCESS code, files differ
+    2 - FAIL code, Input\output failed

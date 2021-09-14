@@ -1,4 +1,5 @@
 package input
+import output.*
 
 enum class Options {
     HELP, FILE, WIDTH, SIGN_MODE, COMMON_MODE, DIFF_MODE, ENABLE_CONTEXT, CONTEXT_BORDER
@@ -44,4 +45,31 @@ fun parseArgs(args: MutableList<String>): Map<Options, String> {
         result[Options.ENABLE_CONTEXT] = "True"
     parseLongArgs(args, result)
     return result
+}
+
+fun keyMathing(options: Map<Options, String>) {
+    signMode = when(options[Options.SIGN_MODE]) {
+        "long" -> SignPrintingMode.LONG
+        "short" -> SignPrintingMode.SHORT
+        "none" -> SignPrintingMode.NONE
+        null -> SignPrintingMode.LONG
+        else -> {println("Warning!!! Mode \"${options[Options.SIGN_MODE]}\" for option --sign is incorrect. Using default mode - long");
+            SignPrintingMode.LONG}
+    }
+    commonMode = when(options[Options.COMMON_MODE]) {
+        "split" -> PrintingMode.SPLIT
+        "series" -> PrintingMode.SERIES
+        "none" -> PrintingMode.NONE
+        null -> PrintingMode.SPLIT
+        else -> {println("Warning!!! Mode \"${options[Options.COMMON_MODE]}\" for option --common is incorrect. Using default mode - split");
+            PrintingMode.SPLIT}
+    }
+    diffMode = when(options[Options.DIFF_MODE]) {
+        "split" -> PrintingMode.SPLIT
+        "series" -> PrintingMode.SERIES
+        "none" -> PrintingMode.NONE
+        null -> PrintingMode.SPLIT
+        else -> {println("Warning!!! Mode \"${options[Options.DIFF_MODE]}\" for option --diff is incorrect. Using default mode - split");
+            PrintingMode.SPLIT}
+    }
 }
