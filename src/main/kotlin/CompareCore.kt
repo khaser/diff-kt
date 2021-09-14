@@ -50,6 +50,7 @@ class CompareCore(fileNameA: String, fileNameB: String) {
     //Longest common sequence as SIDs array
     private val commonSequence = findLongestCommonSubSec()
 
+    //Next classes used for easy access to part of output
     data class Segment(val from: Int, val to: Int)
     class TextBlock(file: File, range: Segment) {
         val text = file.getBlock(range.from, range.to)
@@ -61,6 +62,7 @@ class CompareCore(fileNameA: String, fileNameB: String) {
 
     val diff: MutableList<DiffBlock> = generateDiff()
 
+    //Generate diff object from commonSequence
     private fun generateDiff(): MutableList<DiffBlock> {
         var alreadyAddedFromA = 0
         var alreadyAddedFromB = 0

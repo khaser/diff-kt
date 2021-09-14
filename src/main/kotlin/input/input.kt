@@ -5,7 +5,8 @@ enum class Options {
     HELP, FILE, WIDTH, SIGN_MODE, COMMON_MODE, DIFF_MODE, ENABLE_CONTEXT, CONTEXT_BORDER
 }
 
-fun parseLongArgs(args: MutableList<String>, result: MutableMap<Options, String>)  {
+//Function for parsing options with argument
+private fun parseLongArgs(args: MutableList<String>, result: MutableMap<Options, String>)  {
     val keys: Map<String, Options> = mapOf(Pair("-f", Options.FILE), Pair("-w", Options.WIDTH), Pair("-c", Options.COMMON_MODE),
         Pair("-d", Options.DIFF_MODE), Pair("-b", Options.CONTEXT_BORDER), Pair("-s", Options.SIGN_MODE),
         Pair("--file", Options.FILE), Pair("--width", Options.WIDTH), Pair("--common", Options.COMMON_MODE),
@@ -32,7 +33,7 @@ fun parseLongArgs(args: MutableList<String>, result: MutableMap<Options, String>
     if (dropped.isNotEmpty()) println("Was ignored next keys: ${dropped.joinToString(" ")}")
 }
 
-
+//Parse all options, main function of package
 fun parseArgs(args: MutableList<String>): Map<Options, String> {
     val result: MutableMap<Options, String> = mutableMapOf()
     val flagKeys: Set<String> = setOf("-h", "-o", "--help", "--context")
@@ -47,6 +48,7 @@ fun parseArgs(args: MutableList<String>): Map<Options, String> {
     return result
 }
 
+//Convert string argument to enum
 fun keyMathing(options: Map<Options, String>) {
     signMode = when(options[Options.SIGN_MODE]) {
         "long" -> SignPrintingMode.LONG

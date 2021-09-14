@@ -100,12 +100,12 @@ fun getSign(seg: CompareCore.Segment, sign: SignType): String {
     return when (sign) {
         SignType.ADDED -> when (signMode) {
             SignPrintingMode.LONG -> "Added strings from ${seg.from + 1} to ${seg.to + 1}"
-            SignPrintingMode.SHORT -> "a${seg.from + 1}-${seg.to + 1}"
+            SignPrintingMode.SHORT -> "A ${seg.from + 1}-${seg.to + 1}"
             SignPrintingMode.NONE -> ""
         }
         SignType.DELETED -> when (signMode) {
             SignPrintingMode.LONG -> "Deleted strings from ${seg.from + 1} to ${seg.to + 1}"
-            SignPrintingMode.SHORT -> "d${seg.from + 1}-${seg.to + 1}"
+            SignPrintingMode.SHORT -> "D ${seg.from + 1}-${seg.to + 1}"
             SignPrintingMode.NONE -> ""
         }
         SignType.NONE -> ""
