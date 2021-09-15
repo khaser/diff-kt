@@ -2,15 +2,15 @@ import kotlin.system.exitProcess
 import java.io.File as JavaFile
 
 //Class for reading input file and converting it to sequence of integers(further SID) saving return transformation.
-class File(fileName: String, parentCore: CompareCore) {
+class File(fileName: String, commonMap: MutableMap<String, Int>) {
 
     //Map for getting string by SID
-    private val string2Int = parentCore.string2Int
+    val string2Int = commonMap
     //Array reverse to string2Int. Used to give equal strings from different files the same SID
-    private var int2String: Array<String> = arrayOf()
+    var int2String: Array<String> = arrayOf()
     //Array of SID for file
-    val sequence = parseFile(fileName)
-    val size = sequence.size
+    var sequence = parseFile(fileName)
+    var size = sequence.size
     var minWidth = 0
 
     private fun parseFile(fileName: String): IntArray {
@@ -45,8 +45,8 @@ class CompareCore(fileNameA: String, fileNameB: String) {
 
     //Common SID -> String map for both files
     val string2Int: MutableMap<String, Int> = mutableMapOf()
-    private val fileA = File(fileNameA, this)
-    private val fileB = File(fileNameB, this)
+    val fileA = File(fileNameA, string2Int)
+    val fileB = File(fileNameB, string2Int)
     //Longest common sequence as SIDs array
     private val commonSequence = findLongestCommonSubSec()
 
@@ -63,7 +63,7 @@ class CompareCore(fileNameA: String, fileNameB: String) {
     val diff: MutableList<DiffBlock> = generateDiff()
 
     //Generate diff object from commonSequence
-    private fun generateDiff(): MutableList<DiffBlock> {
+    fun generateDiff(): MutableList<DiffBlock> {
         var alreadyAddedFromA = 0
         var alreadyAddedFromB = 0
         var lastCommon = Pair(-1, -1)
@@ -93,7 +93,7 @@ class CompareCore(fileNameA: String, fileNameB: String) {
     }
 
 
-    private fun findLongestCommonSubSec(): ArrayList<Pair<Int, Int>> {
+    fun findLongestCommonSubSec(): ArrayList<Pair<Int, Int>> {
         val dp: Array<Array<Int>> = Array(fileA.size + 1) { Array(fileB.size + 1) { 0 } }
 
         for (i in 0..fileA.size) {

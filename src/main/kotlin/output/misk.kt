@@ -43,25 +43,25 @@ fun setColor(color: Color) {
 
 
 //Some functions for implementation SPLIT PrintingMode
-fun printBlock2Colomns(block: CompareCore.TextBlock, color: Color = Color.WHITE) {
-    printBlock2Colomns(block, block, Pair(SignType.NONE, SignType.NONE), Pair(color, color));
+fun printBlock2Columns(block: CompareCore.TextBlock, color: Color = Color.WHITE) {
+    printBlock2Columns(block, block, Pair(SignType.NONE, SignType.NONE), Pair(color, color));
 }
 
-fun printBlock2Colomns(blockA: CompareCore.TextBlock, blockB: CompareCore.TextBlock,
+fun printBlock2Columns(blockA: CompareCore.TextBlock, blockB: CompareCore.TextBlock,
                        sign: Pair<SignType, SignType> = Pair(SignType.NONE, SignType.NONE), color: Pair<Color, Color> = Pair(Color.RED, Color.GREEN)) {
     if (sign.first != SignType.NONE && signMode != SignPrintingMode.NONE)
-        printLine2Colomns(getSign(blockA.seg, sign.first), getSign(blockB.seg, sign.second), Pair(Color.PURPLE, Color.PURPLE))
-    printBlock2Colomns(blockA.text, blockB.text, color);
+        printLine2Columns(getSign(blockA.seg, sign.first), getSign(blockB.seg, sign.second), Pair(Color.PURPLE, Color.PURPLE))
+    printBlock2Columns(blockA.text, blockB.text, color);
 }
 
-fun printBlock2Colomns (block: Array<String>, color: Color = Color.WHITE) {
-    printBlock2Colomns(block, block, Pair(color, color));
+fun printBlock2Columns (block: Array<String>, color: Color = Color.WHITE) {
+    printBlock2Columns(block, block, Pair(color, color));
 }
 
-fun printBlock2Colomns (blockA: Array<String>, blockB: Array<String> = blockA,
+fun printBlock2Columns (blockA: Array<String>, blockB: Array<String> = blockA,
                         color: Pair<Color, Color> = Pair(Color.RED, Color.GREEN)) {
     repeat(max(blockA.size, blockB.size)) {
-        printLine2Colomns(
+        printLine2Columns(
             if (it < blockA.size) blockA[it] else "",
             if (it < blockB.size) blockB[it] else "",
             color
@@ -70,7 +70,7 @@ fun printBlock2Colomns (blockA: Array<String>, blockB: Array<String> = blockA,
 }
 
 
-fun printLine2Colomns(strA: String, strB: String, color: Pair<Color, Color> = Pair(Color.RED, Color.GREEN)) {
+fun printLine2Columns(strA: String, strB: String, color: Pair<Color, Color> = Pair(Color.RED, Color.GREEN)) {
     val leftStr = if (strA.length <= colWidth) strA else strA.dropLast(max(0, strA.length - colWidth + 3)) + "..."
     val rightStr = if (strB.length <= colWidth) strB else strB.dropLast(max(0, strB.length - colWidth + 3)) + "..."
     printLine(leftStr.padEnd(colWidth), color.first, PrintLineMode.INLINE)

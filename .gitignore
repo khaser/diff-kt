@@ -72,3 +72,6 @@ distTmp/
 outTmp/
 /test.output
 /kotlin-native/dist
+fileA
+fileB
+output_file

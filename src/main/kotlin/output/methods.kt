@@ -39,12 +39,12 @@ private fun printAll(core: CompareCore) {
     for (i in core.diff) {
         if (i.blockA === i.blockB) {
             when (commonMode) {
-                PrintingMode.SPLIT -> printBlock2Colomns(i.blockA)
+                PrintingMode.SPLIT -> printBlock2Columns(i.blockA)
                 PrintingMode.SERIES -> printBlock(i.blockA)
             }
         } else {
             when (diffMode) {
-                PrintingMode.SPLIT -> printBlock2Colomns(i.blockA, i.blockB, Pair(SignType.DELETED, SignType.ADDED))
+                PrintingMode.SPLIT -> printBlock2Columns(i.blockA, i.blockB, Pair(SignType.DELETED, SignType.ADDED))
                 PrintingMode.SERIES -> {printBlock(i.blockA, SignType.DELETED, Color.RED);
                                         printBlock(i.blockB, SignType.ADDED, Color.GREEN)}
             }
@@ -65,25 +65,25 @@ private fun printWithBorder(core: CompareCore, border: Int) {
             when (position) {
                 Place.FIRST -> {
                     printSeparator();
-                    printBlock2Colomns(block.text.sliceArray((block.size - border) until block.size))
+                    printBlock2Columns(block.text.sliceArray((block.size - border) until block.size))
                 }
                 Place.LAST -> {
-                    printBlock2Colomns(block.text.sliceArray(0 until border))
+                    printBlock2Columns(block.text.sliceArray(0 until border))
                     printSeparator();
                 }
             }
         } else {
-            printBlock2Colomns(block)
+            printBlock2Columns(block)
         }
     }
 
     fun printCommonBlock(block: CompareCore.TextBlock) {
         if (block.size > border * 2) {
-            printBlock2Colomns(block.text.sliceArray(0 until border))
+            printBlock2Columns(block.text.sliceArray(0 until border))
             printSeparator();
-            printBlock2Colomns(block.text.sliceArray(block.size - border until block.size))
+            printBlock2Columns(block.text.sliceArray(block.size - border until block.size))
         } else {
-            printBlock2Colomns(block)
+            printBlock2Columns(block)
         }
     }
 
@@ -96,7 +96,7 @@ private fun printWithBorder(core: CompareCore, border: Int) {
                 else -> printCommonBlock(it.blockA)
             }
         } else {
-            printBlock2Colomns(it.blockA, it.blockB, Pair(SignType.DELETED, SignType.ADDED))
+            printBlock2Columns(it.blockA, it.blockB, Pair(SignType.DELETED, SignType.ADDED))
         }
     }
 }
