@@ -8,7 +8,7 @@ fun main(args: Array<String>) {
     if (args.size < 2) {
         if (args.size == 1 && (args[0] == "-h" || args[0] == "--help")) {
             val helpFile = File("help.txt")
-            helpFile.readLines().forEach{println(it)}
+            helpFile.readLines().forEach { println(it) }
         } else {
             println("You must specify 2 files for comparison")
             exitProcess(2)
@@ -23,7 +23,7 @@ fun main(args: Array<String>) {
 
     if (options.contains(Options.HELP)) {
         val helpFile = File("help.txt")
-        helpFile.readLines().forEach{println(it)}
+        helpFile.readLines().forEach { println(it) }
         return
     }
 

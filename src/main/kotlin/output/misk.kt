@@ -96,16 +96,16 @@ fun printSeparator(color: Color = Color.BLUE) {
 
 //Print sign for each diff block.
 //To evade black lines in output after calling you should check if sign is not "" then print
-fun getSign(seg: CompareCore.Segment, sign: SignType): String {
+fun getSign(seg: IntRange, sign: SignType): String {
     return when (sign) {
         SignType.ADDED -> when (signMode) {
-            SignPrintingMode.LONG -> "Added strings from ${seg.from + 1} to ${seg.to + 1}"
-            SignPrintingMode.SHORT -> "A ${seg.from + 1}-${seg.to + 1}"
+            SignPrintingMode.LONG -> "Added strings from ${seg.first + 1} to ${seg.last + 1}"
+            SignPrintingMode.SHORT -> "A ${seg.first + 1}-${seg.last + 1}"
             SignPrintingMode.NONE -> ""
         }
         SignType.DELETED -> when (signMode) {
-            SignPrintingMode.LONG -> "Deleted strings from ${seg.from + 1} to ${seg.to + 1}"
-            SignPrintingMode.SHORT -> "D ${seg.from + 1}-${seg.to + 1}"
+            SignPrintingMode.LONG -> "Deleted strings from ${seg.first + 1} to ${seg.last + 1}"
+            SignPrintingMode.SHORT -> "D ${seg.first + 1}-${seg.last + 1}"
             SignPrintingMode.NONE -> ""
         }
         SignType.NONE -> ""

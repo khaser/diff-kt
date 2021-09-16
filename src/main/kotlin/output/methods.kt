@@ -1,4 +1,5 @@
 package output
+
 import CompareCore
 import input.Options
 import input.keyMathing
@@ -45,8 +46,10 @@ private fun printAll(core: CompareCore) {
         } else {
             when (diffMode) {
                 PrintingMode.SPLIT -> printBlock2Columns(i.blockA, i.blockB, Pair(SignType.DELETED, SignType.ADDED))
-                PrintingMode.SERIES -> {printBlock(i.blockA, SignType.DELETED, Color.RED);
-                                        printBlock(i.blockB, SignType.ADDED, Color.GREEN)}
+                PrintingMode.SERIES -> {
+                    printBlock(i.blockA, SignType.DELETED, Color.RED);
+                    printBlock(i.blockB, SignType.ADDED, Color.GREEN)
+                }
             }
         }
     }

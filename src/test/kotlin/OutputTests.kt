@@ -72,35 +72,35 @@ internal class OutputMiscTests {
     @Test
     fun testGetSingNone() {
         signMode = SignPrintingMode.LONG
-        assertEquals("", getSign(CompareCore.Segment(0, 100500), SignType.NONE))
+        assertEquals("", getSign(0..100500, SignType.NONE))
         signMode = SignPrintingMode.NONE
-        assertEquals("", getSign(CompareCore.Segment(0, 100500), SignType.DELETED))
-        assertEquals("", getSign(CompareCore.Segment(0, 100500), SignType.ADDED))
-        assertEquals("", getSign(CompareCore.Segment(0, 100500), SignType.NONE))
+        assertEquals("", getSign(0..100500, SignType.DELETED))
+        assertEquals("", getSign(0..100500, SignType.ADDED))
+        assertEquals("", getSign(0..100500, SignType.NONE))
     }
 
     @Test
     fun testGetSingLongAdded() {
         signMode = SignPrintingMode.LONG
-        assertEquals("Added strings from 1 to 100501", getSign(CompareCore.Segment(0, 100500), SignType.ADDED))
+        assertEquals("Added strings from 1 to 100501", getSign(0..100500, SignType.ADDED))
     }
 
     @Test
     fun testGetSingLongDeleted() {
         signMode = SignPrintingMode.LONG
-        assertEquals("Deleted strings from 1 to 100501", getSign(CompareCore.Segment(0, 100500), SignType.DELETED))
+        assertEquals("Deleted strings from 1 to 100501", getSign(0..100500, SignType.DELETED))
     }
 
     @Test
     fun testGetSingShortAdded() {
         signMode = SignPrintingMode.SHORT
-        assertEquals("A 1-100501", getSign(CompareCore.Segment(0, 100500), SignType.ADDED))
+        assertEquals("A 1-100501", getSign(0..100500, SignType.ADDED))
     }
 
     @Test
     fun testGetSingShortDeleted() {
         signMode = SignPrintingMode.SHORT
-        assertEquals("D 1-100501", getSign(CompareCore.Segment(0, 100500), SignType.DELETED))
+        assertEquals("D 1-100501", getSign(0..100500, SignType.DELETED))
     }
 
     @Test
@@ -145,8 +145,10 @@ internal class OutputMiscTests {
         val correctStream = ByteArrayOutputStream()
         System.setOut(PrintStream(correctStream))
         for (i in blockRight.indices) {
-            printLine2Columns(if(blockLeft.size > i) blockLeft[i] else "", blockRight[i],
-                Pair(Color.PURPLE, Color.BLUE))
+            printLine2Columns(
+                if (blockLeft.size > i) blockLeft[i] else "", blockRight[i],
+                Pair(Color.PURPLE, Color.BLUE)
+            )
         }
         System.setOut(PrintStream(stream))
         printBlock2Columns(blockLeft, blockRight, Pair(Color.PURPLE, Color.BLUE))

@@ -7,31 +7,34 @@ internal class CompareCoreTests {
     val fileNameB = "tests_files/TextB"
     val core = CompareCore(fileNameA, fileNameB)
 
-    fun checkDiff(diff: MutableList<CompareCore.DiffBlock>, subSec: ArrayList<Pair<Int, Int>>) {
+    fun checkDiff() {
+        val diff = core.diff
         for (block in diff) {
             if (block.blockA === block.blockB) {
-                for (i in block.blockA.seg.from..block.blockA.seg.to) {
-
+                for (i in block.blockA.seg) {
+                    assert(core.commonSequence.find { it.first == i } != null)
                 }
+            } else {
+                assert(!block.blockA.text.contentDeepEquals(block.blockB.text))
             }
         }
     }
 
     @Test
-    fun testCore1 () {
+    fun testCore1() {
         core.fileA.size = 6
         core.fileB.size = 6
         core.fileA.sequence = intArrayOf(1, 2, 3, 4, 5, 6)
         core.fileB.sequence = intArrayOf(1, 2, 3, 4, 5, 6)
-        val correctSubSec: ArrayList<Pair<Int, Int>> = arrayListOf(Pair(0, 0), Pair(1, 1),
-        Pair(2, 2), Pair(3, 3), Pair(4, 4), Pair(5, 5))
+        val correctSubSec: ArrayList<Pair<Int, Int>> = arrayListOf(
+            Pair(0, 0), Pair(1, 1),
+            Pair(2, 2), Pair(3, 3), Pair(4, 4), Pair(5, 5)
+        )
         assertEquals(correctSubSec, core.findLongestCommonSubSec())
-//        val diff = core.generateDiff();
-        //checkDiff(diff, correctSubSec);
     }
 
     @Test
-    fun testCore2 () {
+    fun testCore2() {
         core.fileA.size = 6
         core.fileB.size = 4
         core.fileA.sequence = intArrayOf(1, 1, 1, 1, 1, 1)
@@ -41,7 +44,7 @@ internal class CompareCoreTests {
     }
 
     @Test
-    fun testCore3 () {
+    fun testCore3() {
         core.fileA.size = 0
         core.fileB.size = 2
         core.fileA.sequence = intArrayOf()
@@ -49,8 +52,9 @@ internal class CompareCoreTests {
         val correctSubSec: ArrayList<Pair<Int, Int>> = arrayListOf()
         assertEquals(correctSubSec, core.findLongestCommonSubSec())
     }
+
     @Test
-    fun testCore4 () {
+    fun testCore4() {
         core.fileA.size = 7
         core.fileB.size = 5
         core.fileA.sequence = intArrayOf(2, 6, 1, 5, 1, 2, 6)
@@ -65,6 +69,7 @@ internal class FileTests {
     val fileName = "tests_files/TextA"
     var commonMap: MutableMap<String, Int> = mutableMapOf()
     var file = File(fileName, commonMap)
+
     @BeforeTest
     fun setUp() {
         commonMap = mutableMapOf()

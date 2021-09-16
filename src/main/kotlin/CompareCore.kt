@@ -6,8 +6,10 @@ class File(fileName: String, commonMap: MutableMap<String, Int>) {
 
     //Map for getting string by SID
     val string2Int = commonMap
+
     //Array reverse to string2Int. Used to give equal strings from different files the same SID
     var int2String: Array<String> = arrayOf()
+
     //Array of SID for file
     var sequence = parseFile(fileName)
     var size = sequence.size
@@ -35,7 +37,7 @@ class File(fileName: String, commonMap: MutableMap<String, Int>) {
     }
 
     fun getBlock(from: Int, to: Int): Array<String> {
-        return Array(to - from + 1) {getString(it + from) }
+        return Array(to - from + 1) { getString(it + from) }
     }
 
     fun getString(index: Int) = int2String[sequence[index]]
@@ -47,23 +49,24 @@ class CompareCore(fileNameA: String, fileNameB: String) {
     val string2Int: MutableMap<String, Int> = mutableMapOf()
     val fileA = File(fileNameA, string2Int)
     val fileB = File(fileNameB, string2Int)
+
     //Longest common sequence as SIDs array
-    private val commonSequence = findLongestCommonSubSec()
+    val commonSequence = findLongestCommonSubSec()
 
     //Next classes used for easy access to part of output
-    data class Segment(val from: Int, val to: Int)
-    class TextBlock(file: File, range: Segment) {
-        val text = file.getBlock(range.from, range.to)
+    class TextBlock(file: File, range: IntRange) {
+        val text = file.getBlock(range.first, range.last)
         val seg = range
-        val size = range.to - range.from + 1
+        val size = range.last - range.first + 1
         val width = file.minWidth
     }
+
     data class DiffBlock(val blockA: TextBlock, val blockB: TextBlock)
 
     val diff: MutableList<DiffBlock> = generateDiff()
 
     //Generate diff object from commonSequence
-    fun generateDiff(): MutableList<DiffBlock> {
+    private fun generateDiff(): MutableList<DiffBlock> {
         var alreadyAddedFromA = 0
         var alreadyAddedFromB = 0
         var lastCommon = Pair(-1, -1)
@@ -71,14 +74,14 @@ class CompareCore(fileNameA: String, fileNameB: String) {
         for (i in commonSequence) {
             if ((i.first - lastCommon.first) != 1 || (i.second - lastCommon.second) != 1) {
                 if (alreadyAddedFromA <= lastCommon.first) {
-                    val commonPart = TextBlock(fileA, Segment(alreadyAddedFromA, lastCommon.first))
+                    val commonPart = TextBlock(fileA, alreadyAddedFromA..lastCommon.first)
                     alreadyAddedFromA = lastCommon.first + 1
                     alreadyAddedFromB = lastCommon.second + 1
                     result.add(DiffBlock(commonPart, commonPart))
                 }
 
-                val partFromA = TextBlock(fileA, Segment(alreadyAddedFromA, i.first - 1))
-                val partFromB = TextBlock(fileB, Segment(alreadyAddedFromB, i.second - 1))
+                val partFromA = TextBlock(fileA, alreadyAddedFromA until i.first)
+                val partFromB = TextBlock(fileB, alreadyAddedFromB until i.second)
                 alreadyAddedFromA = i.first
                 alreadyAddedFromB = i.second
                 result.add(DiffBlock(partFromA, partFromB))
@@ -86,7 +89,7 @@ class CompareCore(fileNameA: String, fileNameB: String) {
             lastCommon = i
         }
         if (alreadyAddedFromA <= lastCommon.first) {
-            val commonPart = TextBlock(fileA, Segment(alreadyAddedFromA, lastCommon.first))
+            val commonPart = TextBlock(fileA, alreadyAddedFromA..lastCommon.first)
             result.add(DiffBlock(commonPart, commonPart))
         }
         return result
