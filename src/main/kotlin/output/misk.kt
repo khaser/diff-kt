@@ -3,12 +3,12 @@ package output
 import java.lang.Integer.max
 
 //Enum for tuning output of function printAll
-enum class PrintingMode {
+enum class PrintingMode(val str: String = "split") {
     SPLIT, SERIES, NONE
 }
 
 //Enums for tuning sign of all diff blocks
-enum class SignPrintingMode {
+enum class SignPrintingMode(val str: String = "long") {
     LONG, SHORT, NONE
 }
 

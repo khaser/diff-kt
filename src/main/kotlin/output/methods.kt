@@ -1,7 +1,7 @@
 package output
 
 import CompareCore
-import input.Options
+import input.Option as Options
 import input.keyMathing
 import java.io.File
 
@@ -28,7 +28,7 @@ fun printDiff(core: CompareCore, options: Map<Options, String>) {
     //Init signMode, diffMode, commonMode from input arguments
     keyMathing(options)
 
-    if (options.containsKey(Options.ENABLE_CONTEXT)) {
+    if (options[Options.ENABLE_CONTEXT] == "true") {
         printWithBorder(core, options[Options.CONTEXT_BORDER]?.toIntOrNull() ?: 5)
     } else {
         printAll(core)

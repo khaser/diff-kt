@@ -17,11 +17,11 @@ fun main(args: Array<String>) {
     }
     val fileNameA = args[args.size - 2]
     val fileNameB = args[args.size - 1]
-    val argsKeys = args.slice(0..args.size - 3).toMutableList()
+    val argsKeys = args.slice(0..args.size - 3)
     //Parsing arguments with module input
     val options = parseArgs(argsKeys)
 
-    if (options.contains(Options.HELP)) {
+    if (options[Option.HELP] == "true") {
         val helpFile = File("help.txt")
         helpFile.readLines().forEach { println(it) }
         return
