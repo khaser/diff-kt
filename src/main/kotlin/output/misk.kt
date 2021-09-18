@@ -1,5 +1,6 @@
 package output
 
+import CompareCore
 import java.lang.Integer.max
 
 //Enum for tuning output of function printAll
@@ -47,19 +48,29 @@ fun printBlock2Columns(block: CompareCore.TextBlock, color: Color = Color.WHITE)
     printBlock2Columns(block, block, Pair(SignType.NONE, SignType.NONE), Pair(color, color));
 }
 
-fun printBlock2Columns(blockA: CompareCore.TextBlock, blockB: CompareCore.TextBlock,
-                       sign: Pair<SignType, SignType> = Pair(SignType.NONE, SignType.NONE), color: Pair<Color, Color> = Pair(Color.RED, Color.GREEN)) {
+fun printBlock2Columns(
+    blockA: CompareCore.TextBlock,
+    blockB: CompareCore.TextBlock,
+    sign: Pair<SignType, SignType> = Pair(SignType.NONE, SignType.NONE),
+    color: Pair<Color, Color> = Pair(Color.RED, Color.GREEN)
+) {
     if (sign.first != SignType.NONE && signMode != SignPrintingMode.NONE)
-        printLine2Columns(getSign(blockA.seg, sign.first), getSign(blockB.seg, sign.second), Pair(Color.PURPLE, Color.PURPLE))
+        printLine2Columns(
+            getSign(blockA.seg, sign.first),
+            getSign(blockB.seg, sign.second),
+            Pair(Color.PURPLE, Color.PURPLE)
+        )
     printBlock2Columns(blockA.text, blockB.text, color);
 }
 
-fun printBlock2Columns (block: List<String>, color: Color = Color.WHITE) {
+fun printBlock2Columns(block: List<String>, color: Color = Color.WHITE) {
     printBlock2Columns(block, block, Pair(color, color));
 }
 
-fun printBlock2Columns (blockA: List<String>, blockB: List<String> = blockA,
-                        color: Pair<Color, Color> = Pair(Color.RED, Color.GREEN)) {
+fun printBlock2Columns(
+    blockA: List<String>, blockB: List<String> = blockA,
+    color: Pair<Color, Color> = Pair(Color.RED, Color.GREEN)
+) {
     repeat(max(blockA.size, blockB.size)) {
         printLine2Columns(
             if (it < blockA.size) blockA[it] else "",

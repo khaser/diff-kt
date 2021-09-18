@@ -16,14 +16,15 @@ enum class Option(val longKey: String, val shortKey: String) {
     CONTEXT_BORDER("--border", "-b")
 }
 
-val ArgOptions: Set<Option> = setOf(Option.FILE, Option.WIDTH, Option.SIGN_MODE, Option.COMMON_MODE, Option.DIFF_MODE, Option.CONTEXT_BORDER)
+val ArgOptions: Set<Option> =
+    setOf(Option.FILE, Option.WIDTH, Option.SIGN_MODE, Option.COMMON_MODE, Option.DIFF_MODE, Option.CONTEXT_BORDER)
 val noArgOptions: Set<Option> = setOf(Option.HELP, Option.ENABLE_CONTEXT)
 
-val keyShortcut = Option.values().map {Pair(it.shortKey, it.longKey)}.toMap()
-val keyOption = Option.values().map {Pair(it.longKey, it)}.toMap()
+val keyShortcut = Option.values().map { Pair(it.shortKey, it.longKey) }.toMap()
+val keyOption = Option.values().map { Pair(it.longKey, it) }.toMap()
 
 //Parse all user input, main function of package
-fun parseArgs(args: List<String>): Map<Option, String> {
+fun parseAllKeys(args: List<String>): Map<Option, String> {
     val result: MutableMap<Option, String> = mutableMapOf()
     //cast all short keys to long keys
     val normalizedArgs = args.map { if (keyShortcut.containsKey(it)) keyShortcut[it]!! else it }
@@ -40,14 +41,15 @@ fun parseArgs(args: List<String>): Map<Option, String> {
 private fun parseKeysWithArgs(args: ArrayList<String>, result: MutableMap<Option, String>) {
     val dropped: MutableList<String> = mutableListOf()
     while (args.isNotEmpty()) {
-        dropped.addAll(args.takeWhile { !ArgOptions.contains(keyOption[it]) }.also { repeat(it.size) {args.removeFirst()} })
+        dropped.addAll(args.takeWhile { !ArgOptions.contains(keyOption[it]) }
+            .also { repeat(it.size) { args.removeFirst() } })
         if (args.isEmpty()) break
         if (args.size == 1) {
             println("Warning!!! After ${args[0]} option must be value")
             dropped.add(args[0])
             break
         }
-        with (keyOption[args[0]]!!) {
+        with(keyOption[args[0]]!!) {
             if (result.containsKey(this)) {
                 println("Warning!!! Redeclaration of option ${args[0]}")
             }
@@ -62,7 +64,7 @@ private fun parseKeysWithArgs(args: ArrayList<String>, result: MutableMap<Option
 //Convert string argument to enum
 fun keyMathing(options: Map<Option, String>) {
     signMode = when (options[Option.SIGN_MODE]) {
-        "long",null -> SignPrintingMode.LONG
+        "long", null -> SignPrintingMode.LONG
         "short" -> SignPrintingMode.SHORT
         "none" -> SignPrintingMode.NONE
         else -> {
@@ -71,7 +73,7 @@ fun keyMathing(options: Map<Option, String>) {
         }
     }
     commonMode = when (options[Option.COMMON_MODE]) {
-        "split",null -> PrintingMode.SPLIT
+        "split", null -> PrintingMode.SPLIT
         "series" -> PrintingMode.SERIES
         "none" -> PrintingMode.NONE
         else -> {
@@ -80,7 +82,7 @@ fun keyMathing(options: Map<Option, String>) {
         }
     }
     diffMode = when (options[Option.DIFF_MODE]) {
-        "split",null -> PrintingMode.SPLIT
+        "split", null -> PrintingMode.SPLIT
         "series" -> PrintingMode.SERIES
         "none" -> PrintingMode.NONE
         else -> {

@@ -1,9 +1,9 @@
 package output
 
 import CompareCore
-import input.Option as Options
 import input.keyMathing
 import java.io.File
+import input.Option as Options
 
 //Package for output object CompareCore.diff in different modes, determined by user.
 //This file contains semantic part of package, all auxiliary functions can be find in misk.kt
@@ -19,7 +19,9 @@ fun printDiff(core: CompareCore, options: Map<Options, String>) {
 
     val minWidth = core.diff.maxOf { it.blockA.width }
 
-    colWidth = options[Options.WIDTH]?.toIntOrNull() ?: minWidth
+    colWidth = options[Options.WIDTH]?.toIntOrNull() ?: minWidth.also {
+        println("Warning!!! Wrong value ${options[Options.WIDTH]} of --width option")
+    }
 
     if (options.containsKey(Options.FILE)) {
         outputFile = File(options[Options.FILE]!!)
@@ -29,7 +31,9 @@ fun printDiff(core: CompareCore, options: Map<Options, String>) {
     keyMathing(options)
 
     if (options[Options.ENABLE_CONTEXT] == "true") {
-        printWithBorder(core, options[Options.CONTEXT_BORDER]?.toIntOrNull() ?: 5)
+        printWithBorder(core, options[Options.CONTEXT_BORDER]?.toIntOrNull() ?: 5.also {
+            println("Warning!!! Wrong value ${options[Options.CONTEXT_BORDER]} of --border option")
+        })
     } else {
         printAll(core)
     }

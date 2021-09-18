@@ -24,11 +24,13 @@ class File(fileName: String, commonMap: MutableMap<String, Int>) {
 
         val sequence: MutableList<Int> = mutableListOf()
         input.forEachLine {
-            if (!string2Int.contains(it)) {
-                sequence.add(string2Int.size)
-                string2Int[it] = string2Int.size
-            } else {
-                sequence.add(string2Int[it]!!)
+            with(it.replace("\t", "    ")) {
+                if (!string2Int.contains(this)) {
+                    sequence.add(string2Int.size)
+                    string2Int[this] = string2Int.size
+                } else {
+                    sequence.add(string2Int[this]!!)
+                }
             }
         }
         int2String = string2Int.keys.toList()
@@ -37,7 +39,7 @@ class File(fileName: String, commonMap: MutableMap<String, Int>) {
     }
 
     fun getBlock(range: IntRange): List<String> {
-        return range.map{ getString(it) }
+        return range.map { getString(it) }
     }
 
     fun getString(index: Int) = int2String[sequence[index]]
@@ -69,20 +71,25 @@ class CompareCore(fileNameA: String, fileNameB: String) {
     private fun generateDiff(): ArrayList<DiffBlock> {
         var lastTaken = Pair(-1, -1)
         val result: ArrayList<DiffBlock> = arrayListOf()
-                while (commonSequence.isNotEmpty()) {
+        while (commonSequence.isNotEmpty()) {
             //take common block
-            commonSequence.takeWhile { if (it.first - lastTaken.first == 1 && it.second - lastTaken.second == 1)
-                {lastTaken=it; true} else false}
-                .also {
-                TextBlock(fileA, it[0].first..it.last().first).let{result.add(DiffBlock(it, it))}
-                repeat(it.size) {commonSequence.removeFirst()}
+            commonSequence.takeWhile {
+                if (it.first - lastTaken.first == 1 && it.second - lastTaken.second == 1) {
+                    lastTaken = it; true
+                } else false
             }
+                .also {
+                    if (it.isNotEmpty()) {
+                        TextBlock(fileA, it[0].first..it.last().first).let { result.add(DiffBlock(it, it)) }
+                        repeat(it.size) { commonSequence.removeFirst() }
+                    }
+                }
             if (commonSequence.isEmpty()) break;
             //take diff block
             val textFromA = TextBlock(fileA, lastTaken.first + 1 until commonSequence[0].first)
             val textFromB = TextBlock(fileB, lastTaken.second + 1 until commonSequence[0].second)
             result.add(DiffBlock(textFromA, textFromB))
-            lastTaken = commonSequence[0].let{Pair(it.first - 1, it.second - 1)}
+            lastTaken = commonSequence[0].let { Pair(it.first - 1, it.second - 1) }
         }
         val textFromA = TextBlock(fileA, lastTaken.first + 1 until fileA.size)
         val textFromB = TextBlock(fileB, lastTaken.second + 1 until fileB.size)
@@ -103,23 +110,26 @@ class CompareCore(fileNameA: String, fileNameB: String) {
             }
         }
 
-        return reverseDpPropogaration(fileA.sequence.size, fileB.sequence.size, dp)
+        return reverseDpPropogaration(dp)
     }
 
     //get common sequence from calculated dynamic programming
-    private fun reverseDpPropogaration(indexA: Int, indexB: Int, dp:List<IntArray>): ArrayList<Pair<Int, Int>> {
-        if (indexA == 0 || indexB == 0) return ArrayList(0)
-
-        if (dp[indexA - 1][indexB - 1] + 1 == dp[indexA][indexB] && fileA.sequence[indexA - 1] == fileB.sequence[indexB - 1]) {
-            //return recursion answer with new common element
-            reverseDpPropogaration(indexA - 1, indexB - 1, dp).let{it.add(Pair(indexA - 1, indexB - 1)); return it}
+    fun reverseDpPropogaration(dp: List<IntArray>): ArrayList<Pair<Int, Int>> {
+        var itA = fileA.size
+        var itB = fileB.size
+        val commonSubSec: ArrayList<Pair<Int, Int>> = arrayListOf()
+        while (itA != 0 || itB != 0) {
+            if (itA != 0 && itB != 0 && dp[itA - 1][itB - 1] + 1 == dp[itA][itB] && fileA.sequence[itA - 1] == fileB.sequence[itB - 1]) {
+                commonSubSec.add(Pair(itA - 1, itB - 1))
+                itA--
+                itB--
+            } else if (itA != 0 && dp[itA - 1][itB] == dp[itA][itB]) {
+                itA--
+            } else {
+                itB--
+            }
         }
-
-        //return the best recursion answer without new common element
-        return if (dp[indexA - 1][indexB] == dp[indexA][indexB]) {
-            reverseDpPropogaration(indexA - 1, indexB, dp)
-        } else {
-            reverseDpPropogaration(indexA, indexB - 1, dp)
-        }
+        commonSubSec.reverse()
+        return commonSubSec
     }
 }
