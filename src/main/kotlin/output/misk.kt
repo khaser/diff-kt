@@ -3,12 +3,12 @@ package output
 import java.lang.Integer.max
 
 //Enum for tuning output of function printAll
-enum class PrintingMode(val str: String = "split") {
+enum class PrintingMode() {
     SPLIT, SERIES, NONE
 }
 
 //Enums for tuning sign of all diff blocks
-enum class SignPrintingMode(val str: String = "long") {
+enum class SignPrintingMode() {
     LONG, SHORT, NONE
 }
 
@@ -54,11 +54,11 @@ fun printBlock2Columns(blockA: CompareCore.TextBlock, blockB: CompareCore.TextBl
     printBlock2Columns(blockA.text, blockB.text, color);
 }
 
-fun printBlock2Columns (block: Array<String>, color: Color = Color.WHITE) {
+fun printBlock2Columns (block: List<String>, color: Color = Color.WHITE) {
     printBlock2Columns(block, block, Pair(color, color));
 }
 
-fun printBlock2Columns (blockA: Array<String>, blockB: Array<String> = blockA,
+fun printBlock2Columns (blockA: List<String>, blockB: List<String> = blockA,
                         color: Pair<Color, Color> = Pair(Color.RED, Color.GREEN)) {
     repeat(max(blockA.size, blockB.size)) {
         printLine2Columns(
@@ -85,7 +85,7 @@ fun printBlock(block: CompareCore.TextBlock, sign: SignType = SignType.NONE, col
     printBlock(block.text, color)
 }
 
-fun printBlock(str: Array<String>, color: Color = Color.WHITE) {
+fun printBlock(str: List<String>, color: Color = Color.WHITE) {
     str.forEach { printLine(it, color) }
 }
 
@@ -97,6 +97,7 @@ fun printSeparator(color: Color = Color.BLUE) {
 //Print sign for each diff block.
 //To evade black lines in output after calling you should check if sign is not "" then print
 fun getSign(seg: IntRange, sign: SignType): String {
+    if (seg.first > seg.last) return "";
     return when (sign) {
         SignType.ADDED -> when (signMode) {
             SignPrintingMode.LONG -> "Added strings from ${seg.first + 1} to ${seg.last + 1}"

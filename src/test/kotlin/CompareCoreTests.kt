@@ -7,19 +7,6 @@ internal class CompareCoreTests {
     val fileNameB = "tests_files/TextB"
     val core = CompareCore(fileNameA, fileNameB)
 
-    fun checkDiff() {
-        val diff = core.diff
-        for (block in diff) {
-            if (block.blockA === block.blockB) {
-                for (i in block.blockA.seg) {
-                    assert(core.commonSequence.find { it.first == i } != null)
-                }
-            } else {
-                assert(!block.blockA.text.contentDeepEquals(block.blockB.text))
-            }
-        }
-    }
-
     @Test
     fun testCore1() {
         core.fileA.size = 6
@@ -93,7 +80,7 @@ internal class FileTests {
             assert(fileB.int2String[fileB.string2Int[i]!!] == i)
         }
         assert(fileB.string2Int === file.string2Int)
-        file.getBlock(14, 19).contentEquals(fileB.getBlock(0, 5))
+        assertEquals(file.getBlock(14..19), fileB.getBlock(0..5))
         assertEquals(file.getString(15), fileB.getString(1))
     }
 }

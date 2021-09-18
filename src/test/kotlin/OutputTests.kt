@@ -77,6 +77,8 @@ internal class OutputMiscTests {
         assertEquals("", getSign(0..100500, SignType.DELETED))
         assertEquals("", getSign(0..100500, SignType.ADDED))
         assertEquals("", getSign(0..100500, SignType.NONE))
+        signMode = SignPrintingMode.SHORT
+        assertEquals("", getSign(100..99, SignType.ADDED))
     }
 
     @Test
@@ -120,8 +122,7 @@ internal class OutputMiscTests {
     fun testPrintBlock() {
         val fileName = "tests_files/TextA"
         val range = 5..18
-        val block = JavaFile(fileName).readLines().slice(range).toTypedArray()
-
+        val block = JavaFile(fileName).readLines().slice(range)
         val correctStream = ByteArrayOutputStream()
         System.setOut(PrintStream(correctStream))
         for (i in block) {
@@ -139,8 +140,8 @@ internal class OutputMiscTests {
         val fileName = "tests_files/TextB"
         val rangeLeft = 5..18
         val rangeRight = 1..17
-        val blockLeft = JavaFile(fileName).readLines().slice(rangeLeft).toTypedArray()
-        val blockRight = JavaFile(fileName).readLines().slice(rangeRight).toTypedArray()
+        val blockLeft = JavaFile(fileName).readLines().slice(rangeLeft)
+        val blockRight = JavaFile(fileName).readLines().slice(rangeRight)
 
         val correctStream = ByteArrayOutputStream()
         System.setOut(PrintStream(correctStream))

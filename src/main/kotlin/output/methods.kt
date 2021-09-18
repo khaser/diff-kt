@@ -68,10 +68,10 @@ private fun printWithBorder(core: CompareCore, border: Int) {
             when (position) {
                 Place.FIRST -> {
                     printSeparator();
-                    printBlock2Columns(block.text.sliceArray((block.size - border) until block.size))
+                    printBlock2Columns(block.text.slice((block.size - border) until block.size))
                 }
                 Place.LAST -> {
-                    printBlock2Columns(block.text.sliceArray(0 until border))
+                    printBlock2Columns(block.text.slice(0 until border))
                     printSeparator();
                 }
             }
@@ -82,9 +82,9 @@ private fun printWithBorder(core: CompareCore, border: Int) {
 
     fun printCommonBlock(block: CompareCore.TextBlock) {
         if (block.size > border * 2) {
-            printBlock2Columns(block.text.sliceArray(0 until border))
+            printBlock2Columns(block.text.slice(0 until border))
             printSeparator();
-            printBlock2Columns(block.text.sliceArray(block.size - border until block.size))
+            printBlock2Columns(block.text.slice(block.size - border until block.size))
         } else {
             printBlock2Columns(block)
         }
