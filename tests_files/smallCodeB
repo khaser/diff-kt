@@ -1,0 +1,147 @@
+#include <bits/stdc++.h>
+
+typedef long long ll;
+typedef unsigned long long ull;
+#define all(a) (a).begin(), (a).end()
+#define rall(a) (a).rbegin(), (a).rend()
+#define int long long
+#define mll __int128
+const int inf = 2e9, mod = 1e9 + 7;
+
+struct rect {
+    int x1, y1, x2, y2;
+    rect() {};
+};
+
+struct sparse_table {
+    int n, m;
+    signed st[128][128][8][8];
+
+    sparse_table (vector<vector<int>> &a) {
+        n = a.size();
+        m = a[0].size();
+        test str1
+        test str2
+
+        for (int k = 1; k < 8; ++k) {
+            for (int j = 0; j < m; ++j) {
+                for (int i = 0; i < n; ++i) {
+                    if (i + (1 << (k - 1)) < n)
+                        st[i][j][k][0] = max(st[i][j][k - 1][0], st[i + (1 << (k - 1))][j][k - 1][0]);
+                }
+            }
+        }
+
+        for (int k = 1; k < 8; ++k) {
+            for (int i = 0; i < n; ++i) {
+                for (int j = 0; j < m; ++j) {
+                    if (j + (1 << (k - 1)) < m)
+                        st[i][j][0][k] = max(st[i][j][0][k - 1], st[i][j + (1 << (k - 1))][0][k - 1]);
+                }
+            }
+        }
+
+        for (int sz_i = 1; sz_i < 8; ++sz_i) {
+            for (int sz_j = 1; sz_j < 8; ++sz_j) {
+                for (int i = 0; i < n; ++i) {
+                    for (int j = 0; j < m; ++j) {
+                        int pos_i = i + (1 << (sz_i - 1));
+                        int pos_j = j + (1 << (sz_j - 1));
+                        if (pos_i < n && pos_j < m)
+                            st[i][j][sz_i][sz_j] = max(max(st[i][j][sz_i - 1][sz_j - 1], st[pos_i][pos_j][sz_i - 1][sz_j - 1]),
+                                                       max(st[pos_i][j][sz_i - 1][sz_j - 1], st[i][pos_j][sz_i - 1][sz_j - 1]));
+                    }
+                }
+            }
+        }
+    }
+
+    int get(int x1, int y1, int x2, int y2) {
+        int st_x = log2(x2 - x1 + 1);
+        int st_y = log2(y2 - y1 + 1);
+        int n_x = x2 - (1 << st_x) + 1, n_y = y2 - (1 << st_y) + 1;
+        return max(max(st[x1][y1][st_x][st_y], st[x1][n_y][st_x][st_y]),
+                   max(st[n_x][y1][st_x][st_y], st[n_x][n_y][st_x][st_y]));
+    }
+
+    /*res.x1 =
+    res.y1 = max(max(st[quest.x1][quest.y1][st_x][st_y][1], st[quest.x1][n_y][st_x][st_y][1]),
+                 max(st[n_x][quest.y1][st_x][st_y][1], st[n_x][n_y][st_x][st_y][1]));
+    res.x2 = min(min(st[quest.x1][quest.y1][st_x][st_y][2], st[quest.x1][n_y][st_x][st_y][2]),
+                 min(st[n_x][quest.y1][st_x][st_y][2], st[n_x][n_y][st_x][st_y][2]));
+    res.y2 = min(min(st[quest.x1][quest.y1][st_x][st_y][3], st[quest.x1][n_y][st_x][st_y][3]),
+                 min(st[n_x][quest.y1][st_x][st_y][3], st[n_x][n_y][st_x][st_y][3]));*/
+};
+
+signed main() {
+#ifdef DEBUG
+    freopen("input.txt", "r", stdin);
+    freopen("output.txt", "w", stdout);
+#else
+    ios_base::sync_with_stdio(0);cin.tie(0);
+#endif
+    int n, m;
+    cin >> n >> m;
+    vector<vector<int>> x1(n, vector<int> (m));
+    vector<vector<int>> x2(n, vector<int> (m));
+    vector<vector<int>> y1(n, vector<int> (m));
+    vector<vector<int>> y2(n, vector<int> (m));
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < m; ++j) {
+            cin >> x1[i][j] >> y1[i][j] >> x2[i][j] >> y2[i][j];
+            if (x1[i][j] > x2[i][j])
+                swap(x1[i][j], x2[i][j]);
+            if (y1[i][j] > y2[i][j])
+                swap(y1[i][j], y2[i][j]);
+            x2[i][j] *= -1;
+            y2[i][j] *= -1;
+        }
+    }
+    int q, A, B;
+    cin >> q >> A >> B;
+    vector<ll> v(q * 4 + 5);
+    cin >> v[0];
+    for (int i = 1; i < v.size(); ++i) {
+        v[i] = (v[i - 1] * A + B) % mod;
+    }
+
+    text
+    text
+    text
+    text
+    text
+    text
+
+    int ans = 0;
+    for (int test = 1; test <= q; ++test) {
+        rect quest;
+        quest.x1 = v[test * 4 - 3] % n;
+        quest.y1 = v[test * 4 - 2] % m;
+        quest.x2 = v[test * 4 - 1] % n;
+        quest.y2 = v[test * 4] % m;
+        rect res;
+
+        cin >> quest.x1 >> quest.y1 >> quest.x2 >> quest.y2;
+
+        if (quest.x1 > quest.x2) {
+            swap(quest.x1, quest.x2);
+        }
+        if (quest.y1 > quest.y2) {
+            swap(quest.y1, quest.y2);
+        }
+
+        /*cout << quest.x1 << ' ' << quest.y1 << ' ' << quest.x2 << ' ' << quest.y2 << '\n';*/
+        /*cout << solver_x1.get(quest.x1, quest.y1, quest.x2, quest.y2);*/
+        res.x1 = solver_x1.get(quest.x1, quest.y1, quest.x2, quest.y2);
+        res.x2 = -solver_x2.get(quest.x1, quest.y1, quest.x2, quest.y2);
+        res.y1 = solver_y1.get(quest.x1, quest.y1, quest.x2, quest.y2);
+        res.y2 = -solver_y2.get(quest.x1, quest.y1, quest.x2, quest.y2);
+
+        int tmp = (max(0ll, res.x2 - res.x1) % mod) * (max(0ll, res.y2 - res.y1) % mod);
+        ans += tmp;
+        ans %= mod;
+    }
+    cout << ans;
+
+    return 0;
+}
