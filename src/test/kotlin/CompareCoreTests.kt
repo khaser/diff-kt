@@ -2,26 +2,24 @@ import kotlin.test.*
 
 internal class CompareCoreTests {
 
-
     val fileNameA = "tests_files/TextA"
     val fileNameB = "tests_files/TextB"
     val core = CompareCore(fileNameA, fileNameB)
 
     @Test
-    fun testCore1() {
+    fun testCoreFullMatching() {
         core.fileA.size = 6
         core.fileB.size = 6
         core.fileA.sequence = intArrayOf(1, 2, 3, 4, 5, 6)
         core.fileB.sequence = intArrayOf(1, 2, 3, 4, 5, 6)
         val correctSubSec: ArrayList<Pair<Int, Int>> = arrayListOf(
-            Pair(0, 0), Pair(1, 1),
-            Pair(2, 2), Pair(3, 3), Pair(4, 4), Pair(5, 5)
+            Pair(0, 0), Pair(1, 1), Pair(2, 2), Pair(3, 3), Pair(4, 4), Pair(5, 5)
         )
         assertEquals(correctSubSec, core.findLongestCommonSubSec())
     }
 
     @Test
-    fun testCore2() {
+    fun testCoreNoUniqueElements() {
         core.fileA.size = 6
         core.fileB.size = 4
         core.fileA.sequence = intArrayOf(1, 1, 1, 1, 1, 1)
@@ -31,7 +29,7 @@ internal class CompareCoreTests {
     }
 
     @Test
-    fun testCore3() {
+    fun testCoreOneSeqIsEmpty() {
         core.fileA.size = 0
         core.fileB.size = 2
         core.fileA.sequence = intArrayOf()
@@ -41,7 +39,7 @@ internal class CompareCoreTests {
     }
 
     @Test
-    fun testCore4() {
+    fun testCoreIsLongestTest() {
         core.fileA.size = 7
         core.fileB.size = 5
         core.fileA.sequence = intArrayOf(2, 6, 1, 5, 1, 2, 6)
@@ -64,7 +62,7 @@ internal class FileTests {
     }
 
     @Test
-    fun testFile() {
+    fun testSingleFile() {
         for (i in file.int2String) {
             assert(file.int2String[file.string2Int[i]!!] == i)
         }

@@ -48,8 +48,9 @@ EXIT CODES
     2 - FAIL code, Input\output failed
 """.trimIndent()
 
+
 fun main(args: Array<String>) {
-    //Preparsing argument
+    //Pre-parsing argument
     if (args.size < 2) {
         if (args.size == 1 && (args[0] == "-h" || args[0] == "--help")) {
             val helpFile = File("help.txt")

@@ -3,13 +3,13 @@ package output
 import CompareCore
 import java.lang.Integer.max
 
-//Enum for tuning output of function printAll
-enum class PrintingMode() {
+/**Enum for tuning output of function printAll*/
+enum class PrintingMode {
     SPLIT, SERIES, NONE
 }
 
-//Enums for tuning sign of all diff blocks
-enum class SignPrintingMode() {
+/**Enums for tuning sign of all diff blocks*/
+enum class SignPrintingMode {
     LONG, SHORT, NONE
 }
 
@@ -21,12 +21,12 @@ enum class Color {
     BLACK, RED, GREEN, YELLOW, BLUE, PURPLE, GRAY, WHITE
 }
 
-//Enum for function printLine
+/**Enum for function printLine*/
 enum class PrintLineMode {
     NEWLINE, INLINE
 }
 
-//Works only for console output!!!
+/**Works only for console output!!!*/
 fun setColor(color: Color) {
     print(
         when (color) {
@@ -43,9 +43,9 @@ fun setColor(color: Color) {
 }
 
 
-//Some functions for implementation SPLIT PrintingMode
+/**Some functions for implementation SPLIT PrintingMode*/
 fun printBlock2Columns(block: CompareCore.TextBlock, color: Color = Color.WHITE) {
-    printBlock2Columns(block, block, Pair(SignType.NONE, SignType.NONE), Pair(color, color));
+    printBlock2Columns(block, block, Pair(SignType.NONE, SignType.NONE), Pair(color, color))
 }
 
 fun printBlock2Columns(
@@ -60,11 +60,11 @@ fun printBlock2Columns(
             getSign(blockB.seg, sign.second),
             Pair(Color.PURPLE, Color.PURPLE)
         )
-    printBlock2Columns(blockA.text, blockB.text, color);
+    printBlock2Columns(blockA.text, blockB.text, color)
 }
 
 fun printBlock2Columns(block: List<String>, color: Color = Color.WHITE) {
-    printBlock2Columns(block, block, Pair(color, color));
+    printBlock2Columns(block, block, Pair(color, color))
 }
 
 fun printBlock2Columns(
@@ -89,7 +89,7 @@ fun printLine2Columns(strA: String, strB: String, color: Pair<Color, Color> = Pa
     printLine(rightStr, color.second)
 }
 
-//Some functions for implementation SERIES PrintingMode
+/**Some functions for implementation SERIES PrintingMode*/
 fun printBlock(block: CompareCore.TextBlock, sign: SignType = SignType.NONE, color: Color = Color.WHITE) {
     val generatedSign = getSign(block.seg, sign)
     if (generatedSign != "") printLine(getSign(block.seg, sign), Color.PURPLE)
@@ -100,15 +100,15 @@ fun printBlock(str: List<String>, color: Color = Color.WHITE) {
     str.forEach { printLine(it, color) }
 }
 
-//Print separator for context mode
+/**Print separator for context mode*/
 fun printSeparator(color: Color = Color.BLUE) {
     printLine("".padEnd(colWidth * 2, '-'), color)
 }
 
-//Print sign for each diff block.
-//To evade black lines in output after calling you should check if sign is not "" then print
+/**Print sign for each diff block.
+To evade black lines in output after calling you should check if sign is not "" then print*/
 fun getSign(seg: IntRange, sign: SignType): String {
-    if (seg.first > seg.last) return "";
+    if (seg.first > seg.last) return ""
     return when (sign) {
         SignType.ADDED -> when (signMode) {
             SignPrintingMode.LONG -> "Added strings from ${seg.first + 1} to ${seg.last + 1}"
@@ -124,7 +124,7 @@ fun getSign(seg: IntRange, sign: SignType): String {
     }
 }
 
-//Redefinition default function for colored output
+/**Redefinition default function for colored output*/
 fun printLine(str: String, color: Color = Color.WHITE, mode: PrintLineMode = PrintLineMode.NEWLINE) {
     setColor(color)
     if (outputFile != null) {

@@ -2,8 +2,7 @@ package input
 
 import output.*
 
-//keys - strings like --help
-//args - string after keys
+/** keys - strings like --help; args - string after keys */
 
 enum class Option(val longKey: String, val shortKey: String) {
     HELP("--help", "-h"),
@@ -20,24 +19,24 @@ val ArgOptions: Set<Option> =
     setOf(Option.FILE, Option.WIDTH, Option.SIGN_MODE, Option.COMMON_MODE, Option.DIFF_MODE, Option.CONTEXT_BORDER)
 val noArgOptions: Set<Option> = setOf(Option.HELP, Option.ENABLE_CONTEXT)
 
-val keyShortcut = Option.values().map { Pair(it.shortKey, it.longKey) }.toMap()
-val keyOption = Option.values().map { Pair(it.longKey, it) }.toMap()
+val keyShortcut = Option.values().associate { Pair(it.shortKey, it.longKey) }
+val keyOption = Option.values().associateBy { it.longKey }
 
-//Parse all user input, main function of package
+/** Parse all user input, main function of package*/
 fun parseAllKeys(args: List<String>): Map<Option, String> {
     val result: MutableMap<Option, String> = mutableMapOf()
-    //cast all short keys to long keys
-    val normalizedArgs = args.map { if (keyShortcut.containsKey(it)) keyShortcut[it]!! else it }
+    //Cast all short keys to long keys
+    val normalizedArgs = args.map { keyShortcut[it] ?: it }
     val (onlyKey, keyWithArg) = normalizedArgs.partition { noArgOptions.contains(keyOption[it]) }
-    //parse keys without args
+    //Parse keys without args
     noArgOptions.forEach { result[it] = onlyKey.contains(it.longKey).toString() }
-    //parse keys with args
+    //Parse keys with args
     parseKeysWithArgs(keyWithArg as ArrayList<String>, result)
     return result
 }
 
 
-//Function for parsing options with argument
+/** Function for parsing options with argument like --width 100*/
 private fun parseKeysWithArgs(args: ArrayList<String>, result: MutableMap<Option, String>) {
     val dropped: MutableList<String> = mutableListOf()
     while (args.isNotEmpty()) {
@@ -61,14 +60,14 @@ private fun parseKeysWithArgs(args: ArrayList<String>, result: MutableMap<Option
 }
 
 
-//Convert string argument to enum
+/** Convert string argument to enum*/
 fun keyMathing(options: Map<Option, String>) {
     signMode = when (options[Option.SIGN_MODE]) {
         "long", null -> SignPrintingMode.LONG
         "short" -> SignPrintingMode.SHORT
         "none" -> SignPrintingMode.NONE
         else -> {
-            println("Warning!!! Mode \"${options[Option.SIGN_MODE]}\" for option --sign is incorrect. Using default mode - long");
+            println("Warning!!! Mode \"${options[Option.SIGN_MODE]}\" for option --sign is incorrect. Using default mode - long")
             SignPrintingMode.LONG
         }
     }
@@ -77,7 +76,7 @@ fun keyMathing(options: Map<Option, String>) {
         "series" -> PrintingMode.SERIES
         "none" -> PrintingMode.NONE
         else -> {
-            println("Warning!!! Mode \"${options[Option.COMMON_MODE]}\" for option --common is incorrect. Using default mode - split");
+            println("Warning!!! Mode \"${options[Option.COMMON_MODE]}\" for option --common is incorrect. Using default mode - split")
             PrintingMode.SPLIT
         }
     }
@@ -86,7 +85,7 @@ fun keyMathing(options: Map<Option, String>) {
         "series" -> PrintingMode.SERIES
         "none" -> PrintingMode.NONE
         else -> {
-            println("Warning!!! Mode \"${options[Option.DIFF_MODE]}\" for option --diff is incorrect. Using default mode - split");
+            println("Warning!!! Mode \"${options[Option.DIFF_MODE]}\" for option --diff is incorrect. Using default mode - split")
             PrintingMode.SPLIT
         }
     }
